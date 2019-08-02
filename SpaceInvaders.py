@@ -15,7 +15,24 @@ class Ship(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load("Sprites/spaceship.png").convert()
         self.rect = self.image.get_rect()
-        self.rect.center = (SCREEN_WIDTH / 2, SCREEN_HEIGHT - 30)
+        self.rect.center = (SCREEN_HEIGHT / 2, SCREEN_HEIGHT - 30)
+        self.dx = 0
+
+    def update(self):
+        self.dx = 0
+        keystate = pygame.key.get_pressed()
+        if keystate[pygame.K_d]:
+            self.dx = -3
+        if keystate[pygame.K_a]:
+            self.dx = 3
+        self.rect.x += self.dx
+
+        # Constraints
+        if self.rect.left < 0:
+            self.rect.left = 0
+        if self.rect.right > SCREEN_WIDTH:
+            self.rect.right = SCREEN_WIDTH
+
 
 class Game(object):
     """This class represents an instance of the game. If we need to
@@ -45,7 +62,7 @@ class Game(object):
 
     def run_logic(self):
         if not self.game_over:
-            pass
+            self.ship_sprite.update()
 
     def display_frame(self):
         self.screen.fill(BLACK)
