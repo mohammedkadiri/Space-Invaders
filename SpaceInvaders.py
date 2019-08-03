@@ -5,6 +5,7 @@ SCREEN_WIDTH = 900
 SCREEN_HEIGHT = 600
 
 BLACK = (0, 0, 0)
+RED = (255, 0, 0)
 WHITE = (255, 255, 255)
 
 
@@ -33,6 +34,17 @@ class Ship(pygame.sprite.Sprite):
         if self.rect.right > SCREEN_WIDTH:
             self.rect.right = SCREEN_WIDTH
 
+class Bullet(pygame.sprite.Sprite):
+    """ This class represents the bullet. """
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.Surface([2, 8])
+        self.image.fill(RED)
+        self.rect = self.image.get_rect()
+
+    def update(self):
+        """ Move the bullet. """
+        self.rect.y -= 3
 
 class Game(object):
     """This class represents an instance of the game. If we need to
@@ -44,10 +56,14 @@ class Game(object):
         self.ship = ship
         self.game_over = False
 
+        # Create a list to add all sprites
+        self.all_sprites = pygame.sprite.Group()
+
         # Create a list to add only the spaceship sprite
         self.ship_sprite = pygame.sprite.GroupSingle()
-
+        self.bullet_list = pygame.sprite.Group()
         self.ship_sprite.add(self.ship)
+
 
     def process_events(self):
 
@@ -55,6 +71,12 @@ class Game(object):
             if event.type == pygame.QUIT:
                 return True
             if event.type == pygame.MOUSEBUTTONDOWN:
+                # Fire a bullet if the user clicks
+                bullet = Bullet()
+                bullet.rect.x = self.ship.rect.x
+                bullet.rect.y = self.ship.rect.y
+                self.all_sprites.add(bullet)
+                self.bullet_list.add(bullet)
                 if self.game_over:
                     self.__init__()
         return False
@@ -63,10 +85,12 @@ class Game(object):
     def run_logic(self):
         if not self.game_over:
             self.ship_sprite.update()
+            self.all_sprites.update()
 
     def display_frame(self):
         self.screen.fill(BLACK)
         self.ship_sprite.draw(self.screen)
+        self.all_sprites.draw(self.screen)
         pygame.display.flip()
 
 
@@ -87,6 +111,7 @@ def main():
     fps = 120
 
     ship = Ship()
+
 
     game = Game(screen, ship)
 
