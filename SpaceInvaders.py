@@ -73,7 +73,7 @@ class Game(object):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Fire a bullet if the user clicks
                 bullet = Bullet()
-                bullet.rect.x = self.ship.rect.x
+                bullet.rect.x = self.ship.rect.x + 22
                 bullet.rect.y = self.ship.rect.y
                 self.all_sprites.add(bullet)
                 self.bullet_list.add(bullet)
