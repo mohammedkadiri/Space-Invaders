@@ -1,8 +1,8 @@
 
 import pygame
 
-SCREEN_WIDTH = 900
-SCREEN_HEIGHT = 600
+SCREEN_WIDTH = 1000
+SCREEN_HEIGHT = 800
 
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
@@ -14,9 +14,10 @@ class Ship(pygame.sprite.Sprite):
 
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load("Sprites/spaceship.png").convert()
+        self.image = pygame.image.load("Sprites/ship.png").convert()
         self.rect = self.image.get_rect()
-        self.rect.center = (SCREEN_HEIGHT / 2, SCREEN_HEIGHT - 30)
+        self.rect.center = (SCREEN_WIDTH / 2, SCREEN_HEIGHT - 30)
+        self.image.set_colorkey(BLACK)
         self.dx = 0
 
     def update(self):
@@ -33,6 +34,35 @@ class Ship(pygame.sprite.Sprite):
             self.rect.left = 0
         if self.rect.right > SCREEN_WIDTH:
             self.rect.right = SCREEN_WIDTH
+
+class Enemy(pygame.sprite.Sprite):
+    """ This class represents a simple enemy class. """
+
+    def __init__(self):
+        super().__init__()
+        self.invadersList = []
+        self.image = pygame.image.load("Sprites/enemies.png").convert()
+        self.rect = self.image.get_rect()
+        #self.rect.center = (200, 150)
+        self.image.set_colorkey(BLACK)
+
+    # def setUpInvaders(self):
+    #    y = 50
+    #    num_rows = 2
+    #    num_invaders_per_row = 5
+    #
+    #    # while y <= 50 * num_rows:
+    #    #      x = 50
+    #    #      while x <= 50 * num_invaders_per_row:
+    #    #          self.invadersList.append(pygame.Rect(x, y, 50, 50))
+    #    #          x = x + 50
+    #    #      y += 50
+    #    # return self.invadersList
+
+
+
+
+
 
 class Bullet(pygame.sprite.Sprite):
     """ This class represents the bullet. """
@@ -51,17 +81,20 @@ class Game(object):
     reset the game we'd just need to create a new instance of this
     class. """
 
-    def __init__(self, screen, ship):
+    def __init__(self, screen, ship, enemy):
         self.screen = screen
         self.ship = ship
+        self.enemy = enemy
         self.game_over = False
-
+        self.background_image = pygame.image.load("Sprites/space.png").convert()
         # Create a list to add all sprites
         self.all_sprites = pygame.sprite.Group()
+
 
         # Create a list to add only the spaceship sprite
         self.ship_sprite = pygame.sprite.GroupSingle()
         self.bullet_list = pygame.sprite.Group()
+        self.all_sprites.add(self.enemy)
         self.ship_sprite.add(self.ship)
 
 
@@ -88,7 +121,7 @@ class Game(object):
             self.all_sprites.update()
 
     def display_frame(self):
-        self.screen.fill(BLACK)
+        self.screen.blit(self.background_image, [0, 0])
         self.ship_sprite.draw(self.screen)
         self.all_sprites.draw(self.screen)
         pygame.display.flip()
@@ -111,9 +144,10 @@ def main():
     fps = 120
 
     ship = Ship()
+    enemy = Enemy(screen)
 
 
-    game = Game(screen, ship)
+    game = Game(screen, ship, enemy)
 
     while not done:
 
